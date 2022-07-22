@@ -70,7 +70,7 @@ const TweetCard = ({ username, tweetData }) => {
           <p className="font-bold">
             {tweetData.username}{" "}
             <span className="font-thin text-xs ml-1">
-              {dayjs(tweetData.createdAt).format("DD/MM/YYYY hh:mm")}
+              {dayjs(tweetData.createdAt).format("DD/MM/YYYY HH:MM")}
             </span>
             {tweetData.updatedAt !== tweetData.createdAt && (
               <span className="font-thin text-xs ml-1">

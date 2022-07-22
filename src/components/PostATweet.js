@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { createTweet } from "../api/tweetApi";
 
-const PostATweet = ({ username }) => {
+const PostATweet = ({ username, sortState, setSortState }) => {
   const initial = username[0].toUpperCase() || "";
 
   const qc = useQueryClient();
@@ -16,20 +16,24 @@ const PostATweet = ({ username }) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-        tweet: ""
-    }
+      tweet: "",
+    },
   });
 
   const mutation = useMutation(createTweet, {
     onSuccess: (data) => {
       reset();
-      qc.invalidateQueries(["tweets"])
+      qc.invalidateQueries(["tweets"]);
     },
     onError: (err) => console.log(err),
   });
 
   const onSubmit = (data) => {
     mutation.mutate({ ...data, username });
+  };
+
+  const handleSelectChange = (e) => {
+    setSortState(e.target.value);
   };
 
   return (
@@ -52,21 +56,33 @@ const PostATweet = ({ username }) => {
               <div>
                 <p
                   className={`${
-                    (errors.tweet?.type === "maxLength" || watch("tweet")?.length > 140) && "text-red-600"
+                    (errors.tweet?.type === "maxLength" ||
+                      watch("tweet")?.length > 140) &&
+                    "text-red-600"
                   }`}
                 >
                   {watch("tweet")?.length}/140
                 </p>
-                {(errors.tweet?.type === "maxLength" || watch("tweet")?.length > 140) && (
+                {(errors.tweet?.type === "maxLength" ||
+                  watch("tweet")?.length > 140) && (
                   <p className="text-red-600">Too long!</p>
                 )}
               </div>
-              <button
-                className=" bg-blue-400 px-4 py-2 rounded-full disabled:cursor-not-allowed disabled:opacity-50"
-                disabled={watch("tweet")?.length === 0}
-              >
-                Tweet
-              </button>
+              <div className="flex gap-4">
+                <select
+                  value={sortState}
+                  onChange={(e) => handleSelectChange(e)}
+                >
+                  <option value="DESC">Descending</option>
+                  <option value="ASC">Ascending</option>
+                </select>
+                <button
+                  className=" bg-blue-400 px-4 py-2 rounded-full disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled={watch("tweet")?.length === 0}
+                >
+                  Tweet
+                </button>
+              </div>
             </div>
           </form>
         </div>

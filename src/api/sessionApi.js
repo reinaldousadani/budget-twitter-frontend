@@ -12,4 +12,8 @@ export const signin = async (body) => {
     return result
 }
 
+export const signout = async () => {
+   return sessionApi.put("/api/logout")
+}
+
 export default sessionApi
